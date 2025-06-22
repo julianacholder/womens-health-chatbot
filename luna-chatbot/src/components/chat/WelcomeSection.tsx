@@ -41,7 +41,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onQuestionSelect }) => 
           transition={{ delay: 0.4 }}
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-            Hi Beautiful! I'm Luna 💕
+            Hi Beautiful! I&apos;om Luna 💕 
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
             Your caring companion for all things reproductive health. 
@@ -90,7 +90,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ onQuestionSelect }) => 
           transition={{ delay: 1.2 }}
           className="text-sm text-gray-500 italic"
         >
-          Remember: I'm here to provide information and support, but always consult with your healthcare provider for personalized medical advice 💗
+          Remember: I&apos;m here to provide information and support, but always consult with your healthcare provider for personalized medical advice 💗
         </motion.div>
       </div>
     </motion.div>

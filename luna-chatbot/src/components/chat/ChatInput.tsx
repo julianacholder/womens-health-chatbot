@@ -14,20 +14,26 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   const [message, setMessage] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    if (message.trim() && !isLoading) {
-      onSendMessage(message.trim());
-      setMessage("");
-    }
-  };
+  const sendMessage = (): void => {
+  if (message.trim() && !isLoading) {
+    onSendMessage(message.trim());
+    setMessage("");
+  }
+};
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e as any); // Cast to form event since we're calling handleSubmit
-    }
-  };
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  e.preventDefault();
+  sendMessage();
+};
+
+const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(); // no casting, clean & type-safe
+  }
+};
+
+
 
   return (
     <motion.div

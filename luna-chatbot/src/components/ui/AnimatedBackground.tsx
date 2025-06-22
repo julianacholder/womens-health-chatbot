@@ -10,7 +10,7 @@ interface FlowerProps {
   index: number;
 }
 
-const Flower: React.FC<FlowerProps> = ({ character, index }) => {
+const Flower: React.FC<FlowerProps> = ({ character }) => {
   const [animationProps, setAnimationProps] = useState({
     duration: 20,
     delay: 0,
