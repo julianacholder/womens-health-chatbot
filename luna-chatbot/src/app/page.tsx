@@ -4,10 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import DashboardLayout from './dashboard/layout';
 
-// Import your entities and integrations (you'll need to create these)
-// import { ChatMessage as ChatMessageEntity } from "@/entities/ChatMessage";
-// import { InvokeLLM } from "@/integrations/Core";
-
 import WelcomeSection from "@/components/chat/WelcomeSection";
 import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
@@ -18,6 +14,14 @@ interface Message {
   message: string;
   sender: "user" | "bot";
   timestamp: string;
+  messageType?: "normal" | "emergency" | "out_of_domain" | "error";
+}
+
+// FastAPI response interface
+interface FastAPIResponse {
+  success: boolean;
+  response: string;
+  message_type: "normal" | "emergency" | "out_of_domain" | "error";
 }
 
 const ChatPageContent: React.FC = () => {
@@ -26,6 +30,9 @@ const ChatPageContent: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState<boolean>(true);
   const [sessionId, setSessionId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // FastAPI backend URL - update this to match your deployment
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     loadMessages();
@@ -92,30 +99,35 @@ const ChatPageContent: React.FC = () => {
       setMessages(updatedMessages);
       saveMessages(updatedMessages);
 
-      // Call Luna API
-      const response = await fetch('/api/chat', {
+      // Call FastAPI backend
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-session-id': sessionId
         },
         body: JSON.stringify({
-          message: messageText
+          question: messageText  // FastAPI expects 'question' not 'message'
         })
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to get response from Luna');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Create bot message
+      const data: FastAPIResponse = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.response || 'Failed to get response from Luna');
+      }
+
+      // Create bot message with message type
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
         message: data.response,
         sender: "bot",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        messageType: data.message_type
       };
 
       const finalMessages = [...updatedMessages, botMessage];
@@ -125,15 +137,28 @@ const ChatPageContent: React.FC = () => {
     } catch (error) {
       console.error("Error generating response:", error);
       
-      // Error message
+      // Check if it's a network error
+      const isNetworkError = error instanceof TypeError || 
+                           (error as Error).message.includes('fetch');
+      
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        message: "I'm so sorry, but I'm having trouble responding right now. Please try again in a moment. Your health questions are important to me! 💕",
+        message: isNetworkError 
+          ? "I'm having trouble connecting to my servers right now. Please check that the Luna API is running and try again! 💕"
+          : "I'm so sorry, but I'm having trouble responding right now. Please try again in a moment. Your health questions are important to me! 💕",
         sender: "bot",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        messageType: "error"
       };
 
-      const finalMessages = [...messages, errorMessage];
+      const updatedMessagesWithUser = [...messages, {
+        id: `user-${Date.now()}`,
+        message: messageText,
+        sender: "user" as const,
+        timestamp: new Date().toISOString()
+      }];
+
+      const finalMessages = [...updatedMessagesWithUser, errorMessage];
       setMessages(finalMessages);
       saveMessages(finalMessages);
     }
@@ -144,6 +169,24 @@ const ChatPageContent: React.FC = () => {
   const handleQuestionSelect = (question: string): void => {
     handleSendMessage(question);
   };
+
+  // Optional: Test API connection on component mount
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        if (response.ok) {
+          console.log('✅ Connected to Luna API');
+        } else {
+          console.warn('⚠️ Luna API health check failed');
+        }
+      } catch (error) {
+        console.warn('⚠️ Cannot connect to Luna API:', error);
+      }
+    };
+
+    testConnection();
+  }, [API_BASE_URL]);
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-pink-25 to-purple-25">
@@ -159,6 +202,7 @@ const ChatPageContent: React.FC = () => {
                   message={message.message}
                   isUser={message.sender === "user"}
                   timestamp={message.timestamp}
+                  messageType={message.messageType}
                 />
               ))}
             </AnimatePresence>
