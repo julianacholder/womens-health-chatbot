@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { MessageCircle, Heart, Sparkles, User, LogOut, LogIn, ChevronUp, Plus, Trash2, Clock } from "lucide-react";
 import {
   Sidebar,
@@ -128,7 +127,7 @@ const SidebarWithConversations: React.FC = () => {
 
   return (
     <>
-     <style jsx>{`
+      <style jsx>{`
         :root {
           --primary-pink: #f8e8f5;
           --accent-pink: #e91e63;
@@ -149,22 +148,115 @@ const SidebarWithConversations: React.FC = () => {
         .glow-effect {
           box-shadow: 0 8px 32px rgba(233, 30, 99, 0.1);
         }
+
+        /* Mobile responsiveness for screens below 436px */
+        @media (max-width: 435px) {
+          .sidebar-header {
+            padding: 1rem !important;
+          }
+          
+          .sidebar-header h2 {
+            font-size: 1rem !important;
+          }
+          
+          .sidebar-header p {
+            font-size: 0.625rem !important;
+          }
+          
+          .sidebar-content {
+            padding: 0.75rem !important;
+          }
+          
+          .sidebar-group {
+            margin-bottom: 1rem !important;
+          }
+          
+          .sidebar-menu-button {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.875rem !important;
+          }
+          
+          .sidebar-footer {
+            padding: 1rem !important;
+          }
+          
+          .user-dropdown-button {
+            padding: 0.5rem !important;
+          }
+          
+          .user-dropdown-button p {
+            font-size: 0.75rem !important;
+          }
+          
+          .user-dropdown-button .text-xs {
+            font-size: 0.625rem !important;
+          }
+          
+          .conversation-item {
+            padding: 0.5rem !important;
+          }
+          
+          .conversation-item p {
+            font-size: 0.75rem !important;
+          }
+          
+          .safe-space-card {
+            padding: 1rem !important;
+          }
+          
+          .safe-space-card h3 {
+            font-size: 0.875rem !important;
+          }
+          
+          .safe-space-card p {
+            font-size: 0.75rem !important;
+          }
+        }
+
+        /* Additional mobile optimizations */
+        @media (max-width: 375px) {
+          .sidebar-header {
+            padding: 0.75rem !important;
+          }
+          
+          .sidebar-header .flex {
+            gap: 0.5rem !important;
+          }
+          
+          .sidebar-header .w-10 {
+            width: 2rem !important;
+            height: 2rem !important;
+          }
+          
+          .sidebar-content {
+            padding: 0.5rem !important;
+          }
+          
+          .sidebar-footer {
+            padding: 0.75rem !important;
+          }
+          
+          .user-dropdown-button .w-10 {
+            width: 2rem !important;
+            height: 2rem !important;
+          }
+        }
       `}</style>
       
-      <SidebarHeader className="border-b border-pink-100 p-6">
+      <SidebarHeader className="sidebar-header border-b border-pink-100 p-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 chat-gradient rounded-full flex items-center justify-center glow-effect">
             <Heart className="w-5 h-5 text-white" />
           </div>
-          <div>
-            <h2 className="font-bold text-gray-800 text-lg">Luna Health</h2>
-            <p className="text-xs text-pink-600 font-medium">Your wellness companion</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-gray-800 text-lg truncate">Luna Health</h2>
+            <p className="text-xs text-pink-600 font-medium truncate">Your wellness companion</p>
           </div>
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="p-4">
-        <SidebarGroup>
+      <SidebarContent className="sidebar-content p-4">
+        <SidebarGroup className="sidebar-group">
           <SidebarGroupLabel className="text-xs font-semibold text-pink-600 uppercase tracking-wider px-2 py-3">
             <Sparkles className="w-3 h-3 inline mr-2" />
             Navigation
@@ -175,13 +267,13 @@ const SidebarWithConversations: React.FC = () => {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild 
-                    className={`hover:bg-pink-50 hover:text-pink-700 transition-all duration-300 rounded-xl mb-2 ${
+                    className={`sidebar-menu-button hover:bg-pink-50 hover:text-pink-700 transition-all duration-300 rounded-xl mb-2 ${
                       "Chat" === item.page ? 'bg-pink-50 text-pink-700 glow-effect' : ''
                     }`}
                   >
                     <Link href={item.url} className="flex items-center gap-3 px-4 py-3">
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.title}</span>
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-medium truncate">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -192,15 +284,15 @@ const SidebarWithConversations: React.FC = () => {
 
         {/* Conversation History - Only for logged in users */}
         {user && conversations.length > 0 && (
-          <SidebarGroup className="mt-4">
+          <SidebarGroup className="sidebar-group mt-4">
             <div className="flex items-center justify-between px-2 py-3">
-              <SidebarGroupLabel className="text-xs font-semibold text-pink-600 uppercase tracking-wider">
+              <SidebarGroupLabel className="text-xs font-semibold text-pink-600 uppercase tracking-wider flex-1 min-w-0">
                 <Clock className="w-3 h-3 inline mr-2" />
-                Recent Chats
+                <span className="truncate">Recent Chats</span>
               </SidebarGroupLabel>
               <button
                 onClick={handleNewChat}
-                className="p-1 rounded-md hover:bg-pink-50 transition-colors"
+                className="p-1 rounded-md hover:bg-pink-50 transition-colors flex-shrink-0"
                 title="New Chat"
               >
                 <Plus className="w-4 h-4 text-pink-600" />
@@ -211,14 +303,14 @@ const SidebarWithConversations: React.FC = () => {
                 {conversations.slice(0, 8).map((conversation) => (
                   <SidebarMenuItem key={conversation.id}>
                     <div
-                      className={`relative group rounded-xl mb-1 transition-all duration-300 ${
+                      className={`conversation-item relative group rounded-xl mb-1 transition-all duration-300 ${
                         currentConversation?.id === conversation.id 
                           ? 'bg-pink-50 text-pink-700' 
                           : 'hover:bg-pink-50 hover:text-pink-700'
                       }`}
                     >
                       <div 
-                        className="flex items-center gap-2 p-3 cursor-pointer"
+                        className="flex items-center gap-2 p-3 cursor-pointer min-w-0"
                         onClick={() => switchConversation(conversation.id)}
                       >
                         <MessageCircle className="w-4 h-4 flex-shrink-0" />
@@ -229,14 +321,14 @@ const SidebarWithConversations: React.FC = () => {
                               : conversation.title
                             }
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 truncate">
                             {formatDate(conversation.updatedAt)} • {conversation.messages.length} messages
                           </p>
                         </div>
                       </div>
                       <button
                         onClick={(e) => handleDeleteConversation(e, conversation.id)}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-100 transition-all z-10"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-100 transition-all z-10 flex-shrink-0"
                         title="Delete conversation"
                       >
                         <Trash2 className="w-3 h-3 text-red-500" />
@@ -251,7 +343,7 @@ const SidebarWithConversations: React.FC = () => {
 
         {/* New Chat Button for logged in users without conversations */}
         {user && conversations.length === 0 && (
-          <SidebarGroup className="mt-4">
+          <SidebarGroup className="sidebar-group mt-4">
             <SidebarGroupContent>
               <button
                 onClick={handleNewChat}
@@ -264,9 +356,9 @@ const SidebarWithConversations: React.FC = () => {
           </SidebarGroup>
         )}
 
-        <SidebarGroup className="mt-8">
-          <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100">
-            <Heart className="w-8 h-8 text-pink-500 mb-3" />
+        <SidebarGroup className="sidebar-group mt-8">
+          <div className="safe-space-card bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100">
+            <Heart className="w-8 h-8 text-pink-500 mb-3 flex-shrink-0" />
             <h3 className="font-semibold text-gray-800 mb-2">Safe Space</h3>
             <p className="text-sm text-gray-600 leading-relaxed">
               {user 
@@ -286,74 +378,64 @@ const SidebarWithConversations: React.FC = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-pink-100 p-6 bg-gradient-to-r from-pink-25 to-purple-25">
-        {!user ? (
-          <div className="flex items-center gap-3 animate-pulse">
-            <div className="w-10 h-10 bg-pink-200 rounded-full"></div>
-            <div className="flex-1 min-w-0">
-              <div className="h-4 bg-pink-200 rounded mb-1"></div>
-              <div className="h-3 bg-pink-100 rounded w-2/3"></div>
-            </div>
-          </div>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 w-full hover:bg-pink-50 p-2 rounded-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-300">
-                {user ? (
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={user.image || undefined} alt={getUserDisplayName()} />
-                    <AvatarFallback className="bg-gradient-to-br from-pink-200 to-purple-200 text-pink-700 font-semibold">
-                      {getUserInitials(getUserDisplayName())}
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <div className="w-10 h-10 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-pink-700" />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="font-semibold text-gray-800 text-sm truncate">
-                    {user ? getUserDisplayName() : "Welcome, Beautiful"}
-                  </p>
-                  <p className="text-xs text-pink-600">
-                    {user ? (user.email || "Your health matters") : "Login to save chats"}
-                  </p>
-                </div>
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              side="top"
-              className="w-64 mb-2 bg-white/95 backdrop-blur-sm border-pink-100"
-            >
+      <SidebarFooter className="sidebar-footer border-t border-pink-100 p-6 bg-gradient-to-r from-pink-25 to-purple-25">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="user-dropdown-button flex items-center gap-3 w-full hover:bg-pink-50 p-2 rounded-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-300">
               {user ? (
-                <>
-                  <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-gray-900">{getUserDisplayName()}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
-                  </div>
-                  <DropdownMenuSeparator className="bg-pink-100" />
-                  <DropdownMenuItem 
-                    onClick={handleLogout}
-                    className="hover:bg-pink-50 focus:bg-pink-50 cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </>
+                <Avatar className="w-10 h-10 flex-shrink-0">
+                  <AvatarImage src={user.image || undefined} alt={getUserDisplayName()} />
+                  <AvatarFallback className="bg-gradient-to-br from-pink-200 to-purple-200 text-pink-700 font-semibold">
+                    {getUserInitials(getUserDisplayName())}
+                  </AvatarFallback>
+                </Avatar>
               ) : (
+                <div className="w-10 h-10 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-pink-700" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0 text-left">
+                <p className="font-semibold text-gray-800 text-sm truncate">
+                  {user ? getUserDisplayName() : "Welcome, Beautiful"}
+                </p>
+                <p className="text-xs text-pink-600 truncate">
+                  {user ? (user.email || "Your health matters") : "Your health matters"}
+                </p>
+              </div>
+              <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            align="end" 
+            side="top"
+            className="w-64 mb-2 bg-white/95 backdrop-blur-sm border-pink-100"
+          >
+            {user ? (
+              <>
+                <div className="px-3 py-2">
+                  <p className="text-sm font-medium text-gray-900 truncate">{getUserDisplayName()}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+                <DropdownMenuSeparator className="bg-pink-100" />
                 <DropdownMenuItem 
-                  onClick={handleLogin}
+                  onClick={handleLogout}
                   className="hover:bg-pink-50 focus:bg-pink-50 cursor-pointer"
                 >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Login to your account
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+              </>
+            ) : (
+              <DropdownMenuItem 
+                onClick={handleLogin}
+                className="hover:bg-pink-50 focus:bg-pink-50 cursor-pointer"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login to your account
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </>
   );
@@ -394,20 +476,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           }
         `}</style>
         
-        <div className="min-h-screen flex w-full gradient-bg relative isolate">
+        <div className="min-h-screen flex w-full gradient-bg relative isolate overflow-hidden">
           {isMounted && <AnimatedBackground />}
           
-          <Sidebar className="border-r border-pink-100 bg-white/80 backdrop-blur-sm z-20">
+          <Sidebar className="border-r border-pink-100 bg-white/80 backdrop-blur-sm z-20 data-[state=open]:w-full sm:data-[state=open]:w-auto">
             <SidebarWithConversations />
           </Sidebar>
 
-          <main className="flex-1 flex flex-col z-10">
-            <header className="bg-white/90 backdrop-blur-sm border-b border-pink-100 px-6 py-4 md:hidden">
-              <div className="flex items-center gap-4">
+          <main className="flex-1 flex flex-col z-10 min-w-0">
+            <header className="bg-white/90 backdrop-blur-sm border-b border-pink-100 px-4 py-3 md:hidden">
+              <div className="flex items-center gap-3">
                 <SidebarTrigger className="hover:bg-pink-50 p-2 rounded-xl transition-colors duration-200" />
-                <div className="flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-pink-500" />
-                  <h1 className="text-lg font-bold text-gray-800">Luna Health</h1>
+                <div className="flex items-center gap-2 min-w-0">
+                  <Heart className="w-5 h-5 text-pink-500 flex-shrink-0" />
+                  <h1 className="text-lg font-bold text-gray-800 truncate">Luna Health</h1>
                 </div>
               </div>
             </header>
@@ -420,4 +502,4 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </SidebarProvider>
     </ConversationProvider>
   );
-}   
+}

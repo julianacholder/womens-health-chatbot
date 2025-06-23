@@ -33,7 +33,7 @@ const ChatPageContent: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // FastAPI backend URL
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://women-health-chatbot-backend-production.up.railway.app';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ' https://julianacholder--luna-womens-health-chatbot-fastapi-app.modal.run';
 
   // Update showWelcome state based on current conversation
   useEffect(() => {
