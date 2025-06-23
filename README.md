@@ -7,7 +7,7 @@ A fine-tuned GPT-2 model specialized for women's health support and information,
 - ** Live Demo:** [womens-health-chatbot.vercel.app](https://womens-health-chatbot.vercel.app/)
 - ** Video Demo:** [Watch Demo](https://your-video-demo-link.com)
 - ** Model on Hugging Face:** [JCholder/womens-health-chatbot](https://huggingface.co/JCholder/womens-health-chatbot)
-- ** Backend API:** [luna-api.railway.app](https://luna-api.railway.app)
+- ** Backend API:** [luna-api.railway.app](https://women-health-chatbot-backend-production.up.railway.app/)
 
 ##  Project Overview
 
